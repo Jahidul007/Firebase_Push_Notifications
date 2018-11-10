@@ -10,13 +10,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="15dp"
-        android:background="#ffffff">
+        android:background="#ffffff"
+        android:padding="20dp"
+        >
 
-        <TextView
+        <Button
+            android:id="@+id/logout_btn"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="15dp"
-            android:text="Profile Fragment" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/primary_color_btn"
+            android:text="Logout"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            android:fontFamily="@font/nunito_semibold"
+            android:textColor="@android:color/white"/>
 
     </RelativeLayout>
     <!-- TODO: Update blank fragment layout -->
