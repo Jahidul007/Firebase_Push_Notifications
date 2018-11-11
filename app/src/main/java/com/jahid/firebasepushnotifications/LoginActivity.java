@@ -23,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordField;
     private Button mLoginField;
 
-    private Button mRegPageBtn ;
+    private Button mRegPageBtn;
 
     private ProgressBar mProgressBar;
 
@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser != null){
+        if (currentUser != null) {
 
             sendToMain();
         }
@@ -76,20 +76,20 @@ public class LoginActivity extends AppCompatActivity {
                 String email = mEmailField.getText().toString();
                 String password = mPasswordField.getText().toString();
 
-                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
+                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
 
                     mProgressBar.setVisibility(View.VISIBLE);
                     mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
 
-                            if (task.isSuccessful()){
+                            if (task.isSuccessful()) {
 
                                 sendToMain();
                                 mProgressBar.setVisibility(View.INVISIBLE);
 
                             } else {
-                                Toast.makeText(LoginActivity.this,"Error: "+task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 mProgressBar.setVisibility(View.INVISIBLE);
 
                             }
