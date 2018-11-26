@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.constraint.Constraints.TAG;
 
 
 /**
@@ -34,11 +37,12 @@ public class UsersFragment extends Fragment {
     public UsersFragment() {
         // Required empty public constructor
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_user, container, false);
+        View view = inflater.inflate(R.layout.fragment_user, container, false);
 
         mFirestore = FirebaseFirestore.getInstance();
 
@@ -63,20 +67,23 @@ public class UsersFragment extends Fragment {
         mFirestore.collection("Users").addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.d("Error", "Error:" + e.getMessage());
+                } else {
+                    for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
 
-                for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+                        if (doc.getType() == DocumentChange.Type.ADDED) {
 
-                    if (doc.getType() == DocumentChange.Type.ADDED) {
+                            String user_id = doc.getDocument().getId();
 
-                        String user_id = doc.getDocument().getId();
+                            Users users = doc.getDocument().toObject(Users.class).withId(user_id);
+                            usersList.add(users);
 
-                        Users users = doc.getDocument().toObject(Users.class).withId(user_id);
-                        usersList.add(users);
+                            usersRecyclerAdapter.notifyDataSetChanged();
 
-                        usersRecyclerAdapter.notifyDataSetChanged();
+                        }
 
                     }
-
                 }
 
             }

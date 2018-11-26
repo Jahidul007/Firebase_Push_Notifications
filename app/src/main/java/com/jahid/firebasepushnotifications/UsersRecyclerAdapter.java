@@ -1,6 +1,7 @@
 package com.jahid.firebasepushnotifications;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -42,12 +43,14 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         CircleImageView user_image_view = holder.user_image_view;
         Glide.with(context).load(usersList.get(position).getImage()).into(user_image_view);
 
-        String user_id = usersList.get(position).userId;
+        final String user_id = usersList.get(position).userId;
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                Intent sendIntent = new Intent(context, SendActivity.class);
+                sendIntent.putExtra("user_id", user_id);
+                context.startActivity(sendIntent);
             }
         });
     }
