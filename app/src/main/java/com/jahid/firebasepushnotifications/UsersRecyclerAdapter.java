@@ -79,5 +79,4 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
             user_name_view = (TextView) mView.findViewById(R.id.user_list_name);
         }
     }
-
 }

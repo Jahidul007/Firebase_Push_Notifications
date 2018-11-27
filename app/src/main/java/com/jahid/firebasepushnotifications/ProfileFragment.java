@@ -15,7 +15,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -76,10 +80,20 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                mAuth.signOut();
+                Map<String, Object> tokenMapRemove = new HashMap<>();
+                tokenMapRemove.put("token_id",FieldValue.delete());
 
-                Intent intent = new Intent(container.getContext(), LoginActivity.class);
-                startActivity(intent);
+                mFirestore.collection("Users").document(mUserId).update(tokenMapRemove).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        mAuth.signOut();
+                        Intent intent = new Intent(container.getContext(), LoginActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+
 
             }
         });

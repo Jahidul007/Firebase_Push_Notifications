@@ -18,7 +18,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -30,7 +32,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final int PICK_IMAGE = 1 ;
+    private static final int PICK_IMAGE = 1;
     private CircleImageView mImageView;
     private EditText mEmailField;
     private EditText mNameField;
@@ -69,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(imageUri != null){
+                if (imageUri != null) {
 
                     mRegisterProgressBar.setVisibility(View.VISIBLE);
 
@@ -77,13 +79,13 @@ public class RegisterActivity extends AppCompatActivity {
                     String email = mEmailField.getText().toString();
                     String password = mPasswordField.getText().toString();
 
-                    if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
+                    if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
 
-                        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
 
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
 
                                     final String user_id = mAuth.getCurrentUser().getUid();
                                     StorageReference userProfile = mStorage.child(user_id + ".jpg");
@@ -91,13 +93,18 @@ public class RegisterActivity extends AppCompatActivity {
                                     userProfile.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> uploadTask) {
-                                            if (uploadTask.isSuccessful()){
+                                            if (uploadTask.isSuccessful()) {
 
-                                                String download_url = uploadTask.getResult().getDownloadUrl().toString();
+                                                final String download_url = uploadTask.getResult().getDownloadUrl().toString();
+
+
+                                                String token_id = FirebaseInstanceId.getInstance().getToken();
 
                                                 Map<String, Object> userMap = new HashMap<>();
                                                 userMap.put("name", name);
                                                 userMap.put("image", download_url);
+                                                userMap.put("token_id", token_id);
+
                                                 mFirestore.collection("Users").document(user_id).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
@@ -107,15 +114,16 @@ public class RegisterActivity extends AppCompatActivity {
                                                         sendToMain();
                                                     }
                                                 });
+
                                             } else {
-                                                Toast.makeText(RegisterActivity.this,"Error"+ uploadTask.getException().getMessage(),Toast.LENGTH_SHORT);
+                                                Toast.makeText(RegisterActivity.this, "Error" + uploadTask.getException().getMessage(), Toast.LENGTH_SHORT);
                                                 mRegisterProgressBar.setVisibility(View.INVISIBLE);
                                             }
                                         }
                                     });
 
                                 } else {
-                                    Toast.makeText(RegisterActivity.this,"Error"+ task.getException().getMessage(),Toast.LENGTH_SHORT);
+                                    Toast.makeText(RegisterActivity.this, "Error" + task.getException().getMessage(), Toast.LENGTH_SHORT);
                                     mRegisterProgressBar.setVisibility(View.INVISIBLE);
                                 }
                             }
@@ -137,11 +145,11 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                 Intent intent = new Intent();
-                 intent.setType("image/*");
-                 intent.setAction(Intent.ACTION_GET_CONTENT);
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
 
-                 startActivityForResult(Intent.createChooser(intent, "Select Picture"),PICK_IMAGE);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
 
             }
         });
@@ -158,7 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_IMAGE){
+        if (requestCode == PICK_IMAGE) {
 
             imageUri = data.getData();
             mImageView.setImageURI(imageUri);
