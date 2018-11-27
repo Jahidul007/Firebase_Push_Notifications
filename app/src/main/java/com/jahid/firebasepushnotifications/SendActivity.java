@@ -58,7 +58,7 @@ public class SendActivity extends AppCompatActivity {
 
                 String message = mMessageView.getText().toString();
 
-                if(!TextUtils.isEmpty(message)){
+                if (!TextUtils.isEmpty(message)) {
 
                     mMessageProgress.setVisibility(View.VISIBLE);
 
