@@ -14,11 +14,10 @@
         android:background="#ffffff"
         android:layout_margin="15dp">
 
-        <TextView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/notification_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="15dp"
-            android:text="Notification Fragment" />
+            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
     </RelativeLayout>
 
 
